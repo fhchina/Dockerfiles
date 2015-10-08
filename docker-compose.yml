@@ -1,0 +1,39 @@
+nginx:
+  build: ./nginx
+  ports:
+    - "80:80"
+  links:
+    - "php"
+  volumes:
+    - /var/www/htdocs:/var/www/htdocs
+
+php:
+  build: ./php
+  ports:
+    - "9000:9000"
+  links:
+    - "mysql"
+    - "redis"
+  volumes:
+    - /var/www/htdocs:/var/www/htdocs
+
+mysql:
+  build: ./mysql
+  ports:
+    - "3306:3306"
+  volumes:
+    - /var/www/data/mysql:/var/lib/mysql
+  environment:
+    MYSQL_ROOT_PASSWORD: LefWell
+
+redis:
+  build: ./redis
+  ports:
+  - "6379:6379"
+
+#sh$ docker pull nginx
+#sh$ docker pull php
+#sh$ docker pull mysql
+#sh$ docker pull redis
+#
+#sh$ docker-compose up

@@ -1,0 +1,57 @@
+
+#https://github.com/nginxinc/docker-nginx/blob/54a6fe6a3984c13d0f22e6885563bac32dda9eee/Dockerfile
+
+FROM debian:jessie
+MAINTAINER Lef Well <lef.well@gmail.com>
+
+USER root
+
+RUN apt-key adv --keyserver hkp://pgp.mit.edu:80 --recv-keys 573BFD6B3D8FBC641079A6ABABF5BD827BD9BF62
+RUN echo "deb http://nginx.org/packages/mainline/debian/ jessie nginx" >> /etc/apt/sources.list
+
+ENV NGINX_VERSION 1.9.5-1~jessie
+
+RUN apt-get update && \
+    apt-get install -y vim && \
+    apt-get install -y curl &&\
+    apt-get install -y ca-certificates nginx=${NGINX_VERSION} && \
+    rm -rf /var/lib/apt/lists/*
+
+
+# forward request and error logs to docker log collector
+RUN ln -sf /dev/stdout /var/log/nginx/access.log
+RUN ln -sf /dev/stderr /var/log/nginx/error.log
+
+
+#RUN mkdir -p /etc/nginx/conf.d
+#ADD nginx_conf/nginx.conf /etc/nginx/nginx.conf
+#ADD nginx_conf/conf.d/* /etc/nginx/conf.d/
+
+#RUN useradd -s /sbin/nologin www
+#RUN mkdir -p /var/log/www
+#RUN chown -R www:www /var/log/www
+#RUN chmod -R 777 /var/log/www
+
+
+
+
+
+
+
+VOLUME ["/var/www/cache/nginx"]
+VOLUME ["/var/www/htdocs"]
+
+EXPOSE 80 443
+
+CMD ["nginx", "-g", "daemon off;"]
+
+#sh$ docker build -t lef/nginx /var/www/Env/Dockerfiles/nginx
+# -d  daemon
+# --rm   remove this container when exit
+#sh$ docker run -d -p 80:80 -v /var/www/htdocs:/var/www/htdocs --name nginx --link php:php -it lef/nginx
+#sh$ docker ps
+#sh$ docker stop nginx
+#sh$ docker start nginx
+#sh$ docker kill nginx
+#sh$ docker rm nginx
+#sh$ docker run -it lef/nginx /bin/bash
